@@ -1,31 +1,47 @@
-import { useState } from 'react';
-import './App.css';
+import Navbar from './components/navbar';
+import Hero from './components/hero';
+import Aliados from './components/Aliados';
+import ContactForm from './components/contactForm';
+import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
+
+// Configuración tema oscuro 
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#fc4c02',
+    },
+    background: {
+      default: '#0f0f11',
+      paper: '#18181c',
+    },
+    text: {
+      primary: '#ffffff',
+      secondary: '#a0a0ab',
+    },
+  },
+  typography: {
+    fontFamily: '"Plus Jakarta Sans", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    h1: { fontWeight: 800, letterSpacing: '-0.02em' },
+    h2: { fontWeight: 700, letterSpacing: '-0.01em' },
+    h3: { fontWeight: 700 },
+  },
+  shape: {
+    borderRadius: 12,
+  },
+});
 
 function App() {
-  const [kilometers, setKilometers] = useState(0);
-
-  const handleAddKm = () => {
-    setKilometers(prev => prev + 1);
-  };
-
   return (
-    <div style={{ backgroundColor: '#121212', color: '#ffffff', minHeight: '100vh', padding: '2rem', fontFamily: 'sans-serif' }}>
-      <header style={{ textAlign: 'center', marginBottom: '3rem' }}>
-        <h1 style={{ color: '#fc4c02', fontSize: '3rem', fontFamily: 'monospace' }}>THE LONG RUN 🏃‍♂️</h1>
-        <p style={{ color: '#a0a0a0' }}>Plataforma de seguimiento de actividad física para causas sociales en Guayaquil</p>
-      </header>
-
-      <main style={{ maxWidth: '600px', margin: '0 auto', background: '#1e1e1e', padding: '2rem', borderRadius: '15px', border: '1px solid #333' }}>
-        <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>Registro de Kilómetros Solidarios</h2>
-        <p style={{ fontSize: '2rem', color: '#fc4c02', margin: '1rem 0' }}>{kilometers} km acumulados</p>
-        <button 
-          onClick={handleAddKm}
-          style={{ backgroundColor: '#fc4c02', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '8px', fontSize: '1rem', cursor: 'pointer' }}
-        >
-          Registrar 1 km recorrido
-        </button>
-      </main>
-    </div>
+    <ThemeProvider theme={darkTheme}>
+      <CssBaseline />
+      <div style={{ backgroundColor: '#0f0f11', minHeight: '100vh' }}>
+        <Navbar />
+        <Hero />
+        <Aliados />
+        <ContactForm />
+      </div>
+    </ThemeProvider>
   );
 }
 
