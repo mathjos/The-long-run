@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useState, useEffect } from 'react';
 import { 
   Container, 
@@ -30,7 +29,6 @@ export default function Dashboard() {
   const [registros, setRegistros] = useState([]);
   const [filtro, setFiltro] = useState('Todos');
 
-  // Cargar lista de registros desde la API
   const cargarRegistros = async () => {
     try {
       const res = await fetch('http://localhost:5000/api/registros');
@@ -45,7 +43,6 @@ export default function Dashboard() {
     cargarRegistros();
   }, []);
 
-  // Cambiar estado en el servidor
   const toggleEstado = async (id) => {
     try {
       const res = await fetch(`http://localhost:5000/api/registros/${id}/estado`, {
@@ -57,7 +54,6 @@ export default function Dashboard() {
     }
   };
 
-  // Eliminar registro en el servidor
   const eliminarRegistro = async (id) => {
     try {
       const res = await fetch(`http://localhost:5000/api/registros/${id}`, {
@@ -68,6 +64,12 @@ export default function Dashboard() {
       console.error(err);
     }
   };
+
+  const registrosFiltrados = registros.filter(r => {
+    if (filtro === 'Todos') return true;
+    return r.estado === filtro;
+  });
+
   return (
     <Box id="admin" sx={{ py: 8, backgroundColor: '#0f0f11' }}>
       <Container maxWidth="lg">
