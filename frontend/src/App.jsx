@@ -1,11 +1,10 @@
-import navbar from './components/navbar';
-import hero from './components/hero';
+import Navbar from './components/navbar';
+import Hero from './components/hero';
 import Aliados from './components/Aliados';
-import contactForm from './components/contactForm';
-import Dashboard from './components/Dashboard'; // <--- Importamos el Dashboard
+import ContactForm from './components/contactForm';
+import Dashboard from './components/Dashboard';
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
 
-// Configuración del tema oscuro profesional
 const darkTheme = createTheme({
   palette: {
     mode: 'dark',
@@ -41,7 +40,7 @@ function App() {
         <Hero />
         <Aliados />
         <ContactForm />
-        <Dashboard /> {/* <--- Aquí se renderiza el Panel de Control */}
+        <Dashboard />
       </div>
     </ThemeProvider>
   );
