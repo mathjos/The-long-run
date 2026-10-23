@@ -57,3 +57,31 @@ function mostrarBotonStrava() {
         </a>
     `;
 }
+// ==========================================
+// LÓGICA DEL FORMULARIO DE CONTACTO
+// ==========================================
+const formContacto = document.getElementById('form-contacto');
+
+if (formContacto) {
+    formContacto.addEventListener('submit', (e) => {
+        e.preventDefault(); // Evita que la página se recargue
+
+        const nombre = document.getElementById('nombre').value.trim();
+        const correo = document.getElementById('correo').value.trim();
+        const mensaje = document.getElementById('mensaje').value.trim();
+
+        if (nombre && correo && mensaje) {
+            // Mostramos una notificación de éxito reutilizando el toast
+            notificacion.textContent = "¡Mensaje enviado con éxito! Gracias por contactarnos.";
+            notificacion.classList.add('mostrar-toast');
+
+            setTimeout(() => {
+                notificacion.classList.remove('mostrar-toast');
+                notificacion.textContent = "¡Bienvenido! Generando enlace de Strava..."; // Reseteamos el texto original
+            }, 3500);
+
+            // Limpiamos el formulario
+            formContacto.reset();
+        }
+    });
+}
