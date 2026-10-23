@@ -2,6 +2,7 @@ import Navbar from './components/navbar';
 import Hero from './components/hero';
 import Aliados from './components/Aliados';
 import ContactForm from './components/contactForm';
+import Dashboard from './components/Dashboard';
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
 
 // Configuración tema oscuro 
@@ -40,6 +41,7 @@ function App() {
         <Hero />
         <Aliados />
         <ContactForm />
+        <Dashboard />
       </div>
     </ThemeProvider>
   );
