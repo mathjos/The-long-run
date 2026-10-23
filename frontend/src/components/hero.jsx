@@ -18,7 +18,7 @@ import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
-import { useState, useEffect } from 'react';
+
 
 export default function Hero() {
   const [kilometers, setKilometers] = useState(124);
