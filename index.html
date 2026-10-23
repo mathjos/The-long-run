@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Long Run | Kilómetros con Propósito</title>
+    <link href="https://fonts.googleapis.com/css?family=Inter:wght@400;600&family=Montserrat:ital,wght@0,800;1,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header id="navbar">
+        <nav>
+            <div class="logo">THE LONG RUN</div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero" id="hero-section">
+            <div class="hero-content">
+                <h1>KILÓMETROS CON <br><span class="highlight-text">PROPÓSITO</span></h1>
+                <p>Corre, camina o haz senderismo. Transforma tu esfuerzo físico en apoyo real para las causas vulnerables de Guayaquil.</p>
+                <a href="#eventos" class="btn-primary">Explorar Misiones</a>
+            </div>
+        </section>
+
+        <section id="eventos" class="event-section">
+            <h2>MISIONES ACTIVAS</h2>
+            <div class="event-grid">
+                <article class="event-card">
+                    <div class="event-image"></div>
+                    <div class="event-info">
+                        <p class="padrino"><strong>Padrino:</strong> Banco del Pacífico</p>
+                        <h3>Carrera por la Educación</h3>
+                        <p class="meta"><strong>Meta:</strong> 500 KM para donar útiles escolares a 100 niños.</p>
+                        <button class="btn-primary btn-abrir-modal">Ver Podio y Unirse</button>
+                    </div>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <div id="evento-modal" class="modal">
+        <div class="modal-content">
+            <span class="cerrar-modal">&times;</span>
+            <h2 class="modal-titulo">CARRERA POR LA EDUCACIÓN</h2>
+            <div class="modal-body">
+                <div class="modal-causa">
+                    <h4>Impacto Directo</h4>
+                    <p>Cada kilómetro registrado en Strava suma fondos para entregar kits escolares completos en zonas vulnerables. Tu esfuerzo importa.</p>
+                </div>
+                <div class="modal-podio">
+                    <h4>Top Corredores</h4>
+                    <ul class="ranking-list">
+                        <li class="top-1">Gema A. - 42 km</li>
+                        <li class="top-2">Carlos R. - 21 km</li>
+                        <li class="top-3">Luis M. - 15 km</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-accion">
+                <p>Para sumar tus kilómetros, valida tu perfil universitario:</p>
+                <div class="input-group">
+                    <input type="email" id="input-correo" placeholder="usuario@espol.edu.ec">
+                    <button id="btn-validar" class="btn-strava">Validar Identidad</button>
+                </div>
+                <p id="mensaje-error" class="error-text"></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="notificacion" class="toast">¡Bienvenido! Generando enlace de Strava...</div>
+
+    <script src="app.js"></script>
+</body>
+</html>
