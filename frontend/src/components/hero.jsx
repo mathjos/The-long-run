@@ -18,6 +18,7 @@ import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import { useState, useEffect } from 'react';
 
 export default function Hero() {
   const [kilometers, setKilometers] = useState(124);
@@ -28,16 +29,37 @@ export default function Hero() {
   const targetKm = 500;
   const progress = Math.min((kilometers / targetKm) * 100, 100);
 
-  const handleRegisterKm = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setKilometers((prev) => prev + kmToAdd);
-      setLoading(false);
-      setShowAlert(true);
-    }, 900);
-  };
+  // Obtener kilómetros acumulados del servidor al cargar la página
+  useEffect(() => {
+    fetch('http://localhost:5000/api/kilometros')
+      .then(res => res.json())
+      .then(data => {
+        if (data.acumulado !== undefined) setKilometers(data.acumulado);
+      })
+      .catch(err => console.log('El servidor backend no está activo aún:', err));
+  }, []);
 
-  return (
+  // Registrar nuevos kilómetros mediante petición POST a Express
+  const handleRegisterKm = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('http://localhost:5000/api/kilometros', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ km: kmToAdd })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setKilometers(data.acumulado);
+        setShowAlert(true);
+      }
+    } catch (error) {
+      console.error('Error de conexión:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+   return (
     <Box id="inicio" sx={{ py: 10, background: 'radial-gradient(circle at top, #1c1c24 0%, #0f0f11 100%)' }}>
       <Container maxWidth="md">
         <Box textAlign="center" mb={5}>

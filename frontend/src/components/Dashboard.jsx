@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Container, 
   Typography, 
@@ -26,29 +27,47 @@ import AddIcon from '@mui/icons-material/Add';
 import RefreshIcon from '@mui/icons-material/Refresh';
 
 export default function Dashboard() {
-  const [registros, setRegistros] = useState([
-    { id: 1, corredor: 'Carlos Mendoza', km: 12, causa: 'Agua Potable Mapasingue', estado: 'Aprobado', fecha: '2026-10-20' },
-    { id: 2, corredor: 'María Fernanda Gómez', km: 8, causa: 'Salud Comunitaria', estado: 'Pendiente', fecha: '2026-10-22' },
-    { id: 3, corredor: 'Andrea Silva', km: 15, causa: 'Innovación ESPOL', estado: 'Aprobado', fecha: '2026-10-23' },
-  ]);
-
+  const [registros, setRegistros] = useState([]);
   const [filtro, setFiltro] = useState('Todos');
 
-  const toggleEstado = (id) => {
-    setRegistros(prev => prev.map(r => 
-      r.id === id ? { ...r, estado: r.estado === 'Aprobado' ? 'Pendiente' : 'Aprobado' } : r
-    ));
+  // Cargar lista de registros desde la API
+  const cargarRegistros = async () => {
+    try {
+      const res = await fetch('http://localhost:5000/api/registros');
+      const data = await res.json();
+      setRegistros(data);
+    } catch (err) {
+      console.log('Error al conectar con la API de registros:', err);
+    }
   };
 
-  const eliminarRegistro = (id) => {
-    setRegistros(prev => prev.filter(r => r.id !== id));
+  useEffect(() => {
+    cargarRegistros();
+  }, []);
+
+  // Cambiar estado en el servidor
+  const toggleEstado = async (id) => {
+    try {
+      const res = await fetch(`http://localhost:5000/api/registros/${id}/estado`, {
+        method: 'PATCH'
+      });
+      if (res.ok) cargarRegistros();
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const registrosFiltrados = registros.filter(r => {
-    if (filtro === 'Todos') return true;
-    return r.estado === filtro;
-  });
-
+  // Eliminar registro en el servidor
+  const eliminarRegistro = async (id) => {
+    try {
+      const res = await fetch(`http://localhost:5000/api/registros/${id}`, {
+        method: 'DELETE'
+      });
+      if (res.ok) cargarRegistros();
+    } catch (err) {
+      console.error(err);
+    }
+  };
   return (
     <Box id="admin" sx={{ py: 8, backgroundColor: '#0f0f11' }}>
       <Container maxWidth="lg">
