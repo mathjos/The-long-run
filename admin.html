@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Long Run | Panel de Administración</title>
+    <link href="https://fonts.googleapis.com/css?family=Inter:wght@400;600&family=Montserrat:ital,wght@0,800;1,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header id="navbar">
+        <nav style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="logo">THE LONG RUN - ADMIN</div>
+            <a href="index.html" class="btn-primary" style="padding: 0.5rem 1.5rem; font-size: 0.9rem;">Ver Sitio Web</a>
+        </nav>
+    </header>
+
+    <main style="padding-top: 8rem; padding-left: 5%; padding-right: 5%; padding-bottom: 5%;">
+        <section class="admin-dashboard">
+            <h1 style="font-family: var(--fuente-titulos); font-size: 2.2rem; margin-bottom: 1rem;">Panel de Gestión Interna</h1>
+            <p style="color: var(--texto-gris); margin-bottom: 3rem;">Administra las misiones activas, revisa los registros universitarios y supervisa el impacto social.</p>
+
+            <div class="admin-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                
+                <!-- Tarjeta de Control 1 -->
+                <div class="admin-card" style="background-color: var(--bg-tarjeta); padding: 2rem; border-radius: 20px;">
+                    <h3 style="font-family: var(--fuente-titulos); color: var(--naranja-strava); margin-bottom: 1rem;">Usuarios Validados (@espol)</h3>
+                    <p style="font-size: 2rem; font-weight: bold; margin-bottom: 1rem;">12</p>
+                    <p style="color: var(--texto-gris); font-size: 0.9rem;">Estudiantes que han confirmado su identidad institucional para unirse a las misiones.</p>
+                </div>
+
+                <!-- Tarjeta de Control 2 -->
+                <div class="admin-card" style="background-color: var(--bg-tarjeta); padding: 2rem; border-radius: 20px;">
+                    <h3 style="font-family: var(--fuente-titulos); color: var(--naranja-strava); margin-bottom: 1rem;">Misiones Activas</h3>
+                    <p style="font-size: 2.2rem; font-weight: bold; margin-bottom: 1rem;">1</p>
+                    <p style="color: var(--texto-gris); font-size: 0.9rem;">Carrera por la Educación (Patrocinada por Banco del Pacífico).</p>
+                </div>
+
+            </div>
+
+            <!-- Sección de Tabla de Registros -->
+            <div class="admin-table-section" style="margin-top: 4rem;">
+                <h3 style="font-family: var(--fuente-titulos); margin-bottom: 1.5rem;">Mensajes de Contacto Recientes</h3>
+                <div style="background-color: var(--bg-tarjeta); padding: 2rem; border-radius: 20px; overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--naranja-strava);">
+                                <th style="padding: 1rem;">Nombre</th>
+                                <th style="padding: 1rem;">Correo</th>
+                                <th style="padding: 1rem;">Mensaje</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                <td style="padding: 1rem;">Carlos Mendoza</td>
+                                <td style="padding: 1rem;">cmendoza@espol.edu.ec</td>
+                                <td style="padding: 1rem; color: var(--texto-gris);">¿Cómo podemos registrar una nueva empresa madrina?</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
