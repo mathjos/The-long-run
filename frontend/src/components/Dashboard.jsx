@@ -17,7 +17,13 @@ import {
   Select,
   MenuItem,
   FormControl,
-  InputLabel
+  InputLabel,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  CircularProgress
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PendingIcon from '@mui/icons-material/Pending';
@@ -28,6 +34,17 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 export default function Dashboard() {
   const [registros, setRegistros] = useState([]);
   const [filtro, setFiltro] = useState('Todos');
+
+  // Estados para el Modal de Nuevo Registro
+  const [openDialog, setOpenDialog] = useState(false);
+  const [loadingModal, setLoadingModal] = useState(false);
+  const [nuevoCorredor, setNuevoCorredor] = useState({
+    corredor: '',
+    km: '',
+    causa: '',
+    fecha: new Date().toISOString().split('T')[0],
+    estado: 'Pendiente'
+  });
 
   const cargarRegistros = async () => {
     try {
@@ -62,6 +79,33 @@ export default function Dashboard() {
       if (res.ok) cargarRegistros();
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const handleCrearRegistro = async (e) => {
+    e.preventDefault();
+    setLoadingModal(true);
+    try {
+      const res = await fetch('http://localhost:5000/api/registros', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(nuevoCorredor)
+      });
+      if (res.ok) {
+        await cargarRegistros();
+        setOpenDialog(false);
+        setNuevoCorredor({
+          corredor: '',
+          km: '',
+          causa: '',
+          fecha: new Date().toISOString().split('T')[0],
+          estado: 'Pendiente'
+        });
+      }
+    } catch (err) {
+      console.error('Error al guardar el nuevo registro:', err);
+    } finally {
+      setLoadingModal(false);
     }
   };
 
@@ -106,6 +150,7 @@ export default function Dashboard() {
             <Button 
               variant="contained" 
               startIcon={<AddIcon />}
+              onClick={() => setOpenDialog(true)}
               sx={{ backgroundColor: '#fc4c02', '&:hover': { backgroundColor: '#d93d00' }, fontWeight: 700, textTransform: 'none' }}
             >
               Nuevo Registro
@@ -113,6 +158,7 @@ export default function Dashboard() {
           </Box>
         </Box>
 
+        {/* Tabla de Registros */}
         <TableContainer component={Paper} elevation={0} sx={{ backgroundColor: '#16161c', border: '1px solid #262632', borderRadius: 3 }}>
           <Table>
             <TableHead sx={{ backgroundColor: '#1f1f28' }}>
@@ -166,6 +212,116 @@ export default function Dashboard() {
             </TableBody>
           </Table>
         </TableContainer>
+
+        {/* Modal Formulario Dialog */}
+        <Dialog 
+          open={openDialog} 
+          onClose={() => setOpenDialog(false)}
+          PaperProps={{
+            sx: { backgroundColor: '#16161c', color: '#fff', borderRadius: 3, border: '1px solid #262632', width: '100%', maxWidth: 500 }
+          }}
+        >
+          <form onSubmit={handleCrearRegistro}>
+            <DialogTitle sx={{ fontWeight: 800, borderBottom: '1px solid #262632', fontFamily: 'monospace' }}>
+              AGREGAR NUEVO REGISTRO DE CARRERA
+            </DialogTitle>
+            
+            <DialogContent sx={{ pt: 3, display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+              <TextField
+                label="Nombre del Corredor"
+                variant="outlined"
+                fullWidth
+                required
+                value={nuevoCorredor.corredor}
+                onChange={(e) => setNuevoCorredor({ ...nuevoCorredor, corredor: e.target.value })}
+                InputLabelProps={{ style: { color: '#71717a' } }}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    color: '#fff',
+                    backgroundColor: '#1f1f28',
+                    '& fieldset': { borderColor: '#2e2e3a' },
+                    '&:hover fieldset': { borderColor: '#fc4c02' },
+                    '&.Mui-focused fieldset': { borderColor: '#fc4c02' },
+                  }
+                }}
+              />
+
+              <TextField
+                label="Distancia (KM)"
+                type="number"
+                variant="outlined"
+                fullWidth
+                required
+                inputProps={{ min: 1 }}
+                value={nuevoCorredor.km}
+                onChange={(e) => setNuevoCorredor({ ...nuevoCorredor, km: e.target.value })}
+                InputLabelProps={{ style: { color: '#71717a' } }}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    color: '#fff',
+                    backgroundColor: '#1f1f28',
+                    '& fieldset': { borderColor: '#2e2e3a' },
+                    '&:hover fieldset': { borderColor: '#fc4c02' },
+                    '&.Mui-focused fieldset': { borderColor: '#fc4c02' },
+                  }
+                }}
+              />
+
+              <TextField
+                label="Causa Beneficiada"
+                variant="outlined"
+                fullWidth
+                required
+                value={nuevoCorredor.causa}
+                onChange={(e) => setNuevoCorredor({ ...nuevoCorredor, causa: e.target.value })}
+                InputLabelProps={{ style: { color: '#71717a' } }}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    color: '#fff',
+                    backgroundColor: '#1f1f28',
+                    '& fieldset': { borderColor: '#2e2e3a' },
+                    '&:hover fieldset': { borderColor: '#fc4c02' },
+                    '&.Mui-focused fieldset': { borderColor: '#fc4c02' },
+                  }
+                }}
+              />
+
+              <FormControl fullWidth>
+                <InputLabel sx={{ color: '#71717a' }}>Estado Inicial</InputLabel>
+                <Select
+                  value={nuevoCorredor.estado}
+                  label="Estado Inicial"
+                  onChange={(e) => setNuevoCorredor({ ...nuevoCorredor, estado: e.target.value })}
+                  sx={{ 
+                    color: '#fff', 
+                    backgroundColor: '#1f1f28',
+                    '.MuiOutlinedInput-notchedOutline': { borderColor: '#2e2e3a' },
+                    '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#fc4c02' },
+                    '.MuiSvgIcon-root': { color: '#a0a0ab' }
+                  }}
+                >
+                  <MenuItem value="Aprobado">Aprobado</MenuItem>
+                  <MenuItem value="Pendiente">Pendiente</MenuItem>
+                </Select>
+              </FormControl>
+            </DialogContent>
+
+            <DialogActions sx={{ p: 2.5, borderTop: '1px solid #262632' }}>
+              <Button onClick={() => setOpenDialog(false)} sx={{ color: '#a0a0ab', textTransform: 'none' }}>
+                Cancelar
+              </Button>
+              <Button 
+                type="submit" 
+                variant="contained"
+                disabled={loadingModal}
+                startIcon={loadingModal ? <CircularProgress size={18} color="inherit" /> : null}
+                sx={{ backgroundColor: '#fc4c02', '&:hover': { backgroundColor: '#d93d00' }, fontWeight: 700, textTransform: 'none' }}
+              >
+                {loadingModal ? 'Guardando...' : 'Guardar Carrera'}
+              </Button>
+            </DialogActions>
+          </form>
+        </Dialog>
       </Container>
     </Box>
   );

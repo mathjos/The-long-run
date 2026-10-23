@@ -95,3 +95,29 @@ app.delete('/api/registros/:id', (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Servidor backend de The Long Run corriendo en http://localhost:${PORT}`);
 });
+
+// Crear un nuevo registro manualmente desde el Dashboard
+app.post('/api/registros', (req, res) => {
+  const { corredor, km, causa, fecha, estado } = req.body;
+  if (!corredor || !km || !causa) {
+    return res.status(400).json({ error: 'Por favor completa los campos obligatorios.' });
+  }
+
+  const nuevoRegistro = {
+    id: Date.now(),
+    corredor,
+    km: Number(km),
+    causa,
+    fecha: fecha || new Date().toISOString().split('T')[0],
+    estado: estado || 'Pendiente'
+  };
+
+  registros.unshift(nuevoRegistro);
+  kilometrosTotales += Number(km); // Opcional: suma los km a la meta global
+
+  res.status(201).json({ 
+    mensaje: 'Registro creado con éxito', 
+    registro: nuevoRegistro,
+    acumulado: kilometrosTotales 
+  });
+});
