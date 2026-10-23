@@ -190,3 +190,63 @@ input[type="email"]:focus { border-color: var(--naranja-strava); }
     font-weight: bold; opacity: 0; transition: opacity 0.5s, bottom 0.5s;
 }
 .toast.mostrar-toast { visibility: visible; opacity: 1; bottom: 30px; }
+/* ESTILOS DE CONTACTO */
+.contact-section {
+    padding: 5rem 5%;
+    background-color: rgba(21, 42, 85, 0.4);
+    text-align: center;
+}
+
+.contact-section h2 {
+    font-family: var(--fuente-titulos);
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.section-desc {
+    color: var(--texto-gris);
+    margin-bottom: 2.5rem;
+}
+
+.contact-form {
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    text-align: left;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--texto-blanco);
+}
+
+.form-group input, 
+.form-group textarea {
+    padding: 1rem;
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-color: rgba(255, 255, 255, 0.08);
+    color: white;
+    font-family: var(--fuente-texto);
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus, 
+.form-group textarea:focus {
+    border-color: var(--naranja-strava);
+}
+
+.contact-form button {
+    align-self: center;
+    margin-top: 1rem;
+}
