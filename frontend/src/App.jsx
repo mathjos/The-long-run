@@ -3,6 +3,7 @@ import Hero from './components/hero';
 import Aliados from './components/Aliados';
 import ContactForm from './components/contactForm';
 import Dashboard from './components/Dashboard';
+import UserProfile from './components/UserProfile';
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
 
 const darkTheme = createTheme({

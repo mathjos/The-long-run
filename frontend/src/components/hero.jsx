@@ -1,252 +1,126 @@
 import { useState, useEffect } from 'react';
-import { 
-  Container, 
-  Typography, 
-  Box, 
-  Button, 
-  LinearProgress, 
-  Paper, 
-  Grid, 
-  Chip, 
-  Slider, 
-  Alert, 
-  AlertTitle,
-  CircularProgress,
-  Stack
-} from '@mui/material';
+import { Container, Typography, Box, Slider, Button, Paper, LinearProgress } from '@mui/material';
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
-import VerifiedIcon from '@mui/icons-material/Verified';
-import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
-import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 
+export default function Hero({ onKilometrosChange }) {
+  const [kmRegistrados, setKmRegistrados] = useState(0);
+  const [meta] = useState(500);
+  const [kmInput, setKmInput] = useState(5);
+  const [cargando, setCargando] = useState(false);
 
-export default function Hero() {
-  const [kilometers, setKilometers] = useState(124);
-  const [kmToAdd, setKmToAdd] = useState(5);
-  const [loading, setLoading] = useState(false);
-  const [showAlert, setShowAlert] = useState(false);
-
-  const targetKm = 500;
-  const progress = Math.min((kilometers / targetKm) * 100, 100);
-
-  // Obtener kilómetros acumulados del servidor al cargar la página
-  useEffect(() => {
-    fetch('http://localhost:5000/api/kilometros')
-      .then(res => res.json())
-      .then(data => {
-        if (data.acumulado !== undefined) setKilometers(data.acumulado);
-      })
-      .catch(err => console.log('El servidor backend no está activo aún:', err));
-  }, []);
-
-  // Registrar nuevos kilómetros mediante petición POST a Express
-  const handleRegisterKm = async () => {
-    setLoading(true);
+  const obtenerKilometros = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/kilometros', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ km: kmToAdd })
-      });
-      const data = await response.json();
-      if (response.ok) {
-        setKilometers(data.acumulado);
-        setShowAlert(true);
-      }
-    } catch (error) {
-      console.error('Error de conexión:', error);
-    } finally {
-      setLoading(false);
+      const res = await fetch('http://localhost:5000/api/kilometros');
+      const data = await res.json();
+      setKmRegistrados(data.acumulado || 0);
+    } catch (err) {
+      console.error('Error al obtener kilómetros:', err);
     }
   };
-   return (
-    <Box id="inicio" sx={{ py: 10, background: 'radial-gradient(circle at top, #1c1c24 0%, #0f0f11 100%)' }}>
+
+  useEffect(() => {
+    obtenerKilometros();
+  }, []);
+
+  const handleSumarKilometros = async () => {
+    if (kmInput <= 0) return;
+    setCargando(true);
+    try {
+      const res = await fetch('http://localhost:5000/api/kilometros', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ km: Number(kmInput) })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setKmRegistrados(data.acumulado);
+        if (onKilometrosChange) onKilometrosChange(); // Notifica al Dashboard o componentes padres
+      }
+    } catch (err) {
+      console.error('Error al registrar kilómetros:', err);
+    } finally {
+      setCargando(false);
+    }
+  };
+
+  const porcentaje = Math.min(Math.round((kmRegistrados / meta) * 100), 100);
+
+  return (
+    <Box sx={{ pt: 12, pb: 8, backgroundColor: '#0f0f11', color: '#fff' }}>
       <Container maxWidth="md">
-        <Box textAlign="center" mb={5}>
-          <Chip 
-            icon={<VerifiedIcon sx={{ color: '#fc4c02 !important', fontSize: 18 }} />} 
-            label="Iniciativa de Impacto Social — Guayaquil" 
-            sx={{ 
-              color: '#e0e0e0', 
-              backgroundColor: '#1f1f28', 
-              mb: 3, 
-              px: 1, 
-              py: 2, 
-              fontWeight: 500, 
-              border: '1px solid #2e2e3a',
-              transition: 'transform 0.2s ease, border-color 0.2s ease',
-              '&:hover': { transform: 'scale(1.03)', borderColor: '#fc4c02' }
-            }} 
-          />
-          <Typography 
-            variant="h2" 
-            component="h1" 
-            sx={{ 
-              color: '#ffffff', 
-              fontWeight: 800, 
-              mb: 2, 
-              fontSize: { xs: '2.5rem', md: '3.8rem' },
-              transition: 'color 0.3s ease',
-              '&:hover': { color: '#fc4c02' }
-            }}
-          >
-            THE LONG RUN
+        <Box textAlign="center" mb={6}>
+          <Typography variant="h2" sx={{ fontWeight: 900, fontFamily: 'monospace', letterSpacing: -1, mb: 2 }}>
+            CADA KILÓMETRO <Box component="span" sx={{ color: '#fc4c02' }}>CUENTA</Box>
           </Typography>
-          <Typography variant="h6" sx={{ color: '#9494a0', fontWeight: 400, maxWidth: 620, mx: 'auto', lineHeight: 1.6 }}>
-            Plataforma de seguimiento de actividad física para la gestión de donaciones e impacto en causas sociales comunitarias.
+          <Typography variant="h6" sx={{ color: '#a0a0ab', maxWidth: 600, mx: 'auto' }}>
+            Únete a la maratón con propósito social en Guayaquil. Convierte tu esfuerzo físico en donaciones reales.
           </Typography>
         </Box>
 
-        {/* Tarjeta Dashboard */}
-        <Paper elevation={0} sx={{ p: 4, borderRadius: 4, backgroundColor: '#16161c', border: '1px solid #262632' }}>
-          
-          {/* Alerta de confirmación con MUI Alert */}
-          {showAlert && (
-            <Alert 
-              severity="success" 
-              onClose={() => setShowAlert(false)}
-              sx={{ mb: 3, backgroundColor: '#122e1a', color: '#81c784', border: '1px solid #2e7d32' }}
-            >
-              <AlertTitle sx={{ fontWeight: 'bold' }}>¡Actividad Registrada!</AlertTitle>
-              Has sumado exitosamente <strong>{kmToAdd} km</strong> a la meta comunitaria.
-            </Alert>
-          )}
-
-          <Grid container spacing={3} alignItems="center" mb={4}>
-            <Grid item xs={12} sm={4} textAlign="center">
-              <Typography variant="caption" sx={{ color: '#71717a', fontWeight: 600, letterSpacing: 1 }}>
-                ACUMULADO ACTUAL
-              </Typography>
-              <Typography variant="h3" sx={{ color: '#fc4c02', fontWeight: 800, mt: 0.5 }}>
-                {kilometers} <Typography component="span" variant="h6" sx={{ color: '#a1a1aa' }}>KM</Typography>
-              </Typography>
-            </Grid>
-            <Grid item xs={12} sm={4} textAlign="center">
-              <Typography variant="caption" sx={{ color: '#71717a', fontWeight: 600, letterSpacing: 1 }}>
-                META MENSUAL
-              </Typography>
-              <Typography variant="h3" sx={{ color: '#ffffff', fontWeight: 800, mt: 0.5 }}>
-                {targetKm} <Typography component="span" variant="h6" sx={{ color: '#a1a1aa' }}>KM</Typography>
-              </Typography>
-            </Grid>
-            <Grid item xs={12} sm={4} textAlign="center">
-              <Typography variant="caption" sx={{ color: '#71717a', fontWeight: 600, letterSpacing: 1 }}>
-                CUMPLIMIENTO
-              </Typography>
-              <Typography variant="h3" sx={{ color: '#22c55e', fontWeight: 800, mt: 0.5 }}>
-                {progress.toFixed(0)}%
-              </Typography>
-            </Grid>
-          </Grid>
-
-          {/* Barra de Progreso MUI */}
-          <Box mb={4} px={1}>
-            <LinearProgress 
-              variant="determinate" 
-              value={progress} 
-              sx={{ 
-                height: 10, 
-                borderRadius: 5, 
-                backgroundColor: '#272730', 
-                '& .MuiLinearProgress-bar': { backgroundColor: '#fc4c02', borderRadius: 5 } 
-              }} 
-            />
+        {/* Métrica Global */}
+        <Paper elevation={0} sx={{ p: 4, backgroundColor: '#16161c', border: '1px solid #262632', borderRadius: 4, mb: 4 }}>
+          <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+            <Box display="flex" alignItems="center" gap={1}>
+              <DirectionsRunIcon sx={{ color: '#fc4c02' }} />
+              <Typography variant="h6" sx={{ fontWeight: 700 }}>META COMUNITARIA</Typography>
+            </Box>
+            <Typography variant="h5" sx={{ fontWeight: 800, color: '#fc4c02' }}>
+              {kmRegistrados} / {meta} KM
+            </Typography>
           </Box>
 
-          {/* Control Deslizante (MUI Slider) */}
-          <Box sx={{ px: 3, mb: 4 }}>
-            <Typography variant="body2" sx={{ color: '#a0a0ab', mb: 1, textAlign: 'center', fontWeight: 600 }}>
-              Distancia a registrar: <span style={{ color: '#fc4c02' }}>{kmToAdd} KM</span>
-            </Typography>
+          <LinearProgress 
+            variant="determinate" 
+            value={porcentaje} 
+            sx={{ 
+              height: 12, 
+              borderRadius: 6, 
+              backgroundColor: '#262632',
+              '& .MuiLinearProgress-bar': { backgroundColor: '#fc4c02' }
+            }} 
+          />
+          <Typography variant="caption" sx={{ color: '#71717a', mt: 1, display: 'block', textAlign: 'right' }}>
+            {porcentaje}% de la meta alcanzada
+          </Typography>
+        </Paper>
+
+        {/* Controles de Registro de KM */}
+        <Paper elevation={0} sx={{ p: 4, backgroundColor: '#16161c', border: '1px solid #262632', borderRadius: 4 }}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+            <LocalFireDepartmentIcon sx={{ color: '#fc4c02' }} /> REGISTRA TU ENTRENAMIENTO
+          </Typography>
+
+          <Box sx={{ px: 2, mb: 3 }}>
             <Slider
-              value={kmToAdd}
+              value={kmInput}
               min={1}
-              max={25}
-              step={1}
-              onChange={(e, newValue) => setKmToAdd(newValue)}
+              max={42}
               valueLabelDisplay="auto"
+              onChange={(e, val) => setKmInput(val)}
               sx={{
                 color: '#fc4c02',
-                '& .MuiSlider-thumb': {
-                  transition: 'box-shadow 0.2s, transform 0.2s',
-                  '&:hover, &.Mui-focusVisible': {
-                    boxShadow: '0px 0px 0px 8px rgba(252, 76, 2, 0.2)',
-                  },
-                },
-                '& .Mui-focusVisible': {
-                  outline: '2px solid #fc4c02',
-                  outlineOffset: '2px',
-                }
+                '& .MuiSlider-thumb': { backgroundColor: '#fff' },
+                '& .MuiSlider-track': { backgroundColor: '#fc4c02' },
+                '& .MuiSlider-rail': { backgroundColor: '#262632' }
               }}
             />
           </Box>
 
-          {/* Botones con Íconos, Texto y Carga */}
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center" alignItems="center">
-            <Button
-              variant="contained"
-              disableElevation
-              size="large"
-              disabled={loading}
-              startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <DirectionsRunIcon />}
-              endIcon={!loading && <EmojiEventsIcon />}
-              onClick={handleRegisterKm}
-              sx={{ 
-                backgroundColor: '#fc4c02', 
-                color: '#fff',
-                px: 4, 
-                py: 1.8, 
-                borderRadius: 3, 
-                fontWeight: 700, 
-                fontSize: '0.95rem',
-                textTransform: 'none',
-                transition: 'all 0.3s ease',
-                '&:hover': { 
-                  backgroundColor: '#d93d00',
-                  transform: 'translateY(-2px)',
-                  boxShadow: '0 6px 20px rgba(252, 76, 2, 0.3)'
-                },
-                '&:focus-visible': {
-                  outline: '3px solid #ffffff',
-                  outlineOffset: '2px',
-                }
-              }}
-            >
-              {loading ? 'Procesando...' : `Registrar +${kmToAdd} KM`}
-            </Button>
+          <Box display="flex" justifyContent="space-between" alignItems="center">
+            <Typography variant="h6" sx={{ fontWeight: 700 }}>
+              Distancia a sumar: <Box component="span" sx={{ color: '#fc4c02' }}>{kmInput} KM</Box>
+            </Typography>
 
             <Button
-              variant="outlined"
-              size="large"
-              startIcon={<RestartAltIcon />}
-              onClick={() => {
-                setKilometers(124);
-                setKmToAdd(5);
-                setShowAlert(false);
-              }}
-              sx={{ 
-                color: '#a0a0ab', 
-                borderColor: '#2e2e3a',
-                py: 1.8, 
-                px: 3,
-                borderRadius: 3, 
-                fontWeight: 600,
-                textTransform: 'none',
-                transition: 'all 0.2s ease',
-                '&:hover': { 
-                  borderColor: '#fc4c02', 
-                  color: '#fff',
-                  backgroundColor: 'rgba(252, 76, 2, 0.05)'
-                },
-                '&:focus-visible': {
-                  outline: '2px solid #fc4c02',
-                  outlineOffset: '2px',
-                }
-              }}
+              variant="contained"
+              onClick={handleSumarKilometros}
+              disabled={cargando}
+              sx={{ backgroundColor: '#fc4c02', '&:hover': { backgroundColor: '#d93d00' }, fontWeight: 700, px: 4, textTransform: 'none' }}
             >
-              Reiniciar
+              {cargando ? 'Guardando...' : 'Sumar Kilómetros'}
             </Button>
-          </Stack>
+          </Box>
         </Paper>
       </Container>
     </Box>

@@ -27,7 +27,9 @@ import {
   Grid,
   Card,
   CardContent,
-  Avatar
+  Avatar,
+  Snackbar,
+  Alert
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PendingIcon from '@mui/icons-material/Pending';
@@ -42,6 +44,7 @@ export default function Dashboard() {
   const [registros, setRegistros] = useState([]);
   const [filtro, setFiltro] = useState('Todos');
 
+  // Estados para el Modal
   const [openDialog, setOpenDialog] = useState(false);
   const [loadingModal, setLoadingModal] = useState(false);
   const [nuevoCorredor, setNuevoCorredor] = useState({
@@ -51,6 +54,22 @@ export default function Dashboard() {
     fecha: new Date().toISOString().split('T')[0],
     estado: 'Pendiente'
   });
+
+  // Estado para las notificaciones Snackbar
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success'
+  });
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway') return;
+    setSnackbar(prev => ({ ...prev, open: false }));
+  };
+
+  const mostrarAlerta = (message, severity = 'success') => {
+    setSnackbar({ open: true, message, severity });
+  };
 
   const cargarRegistros = async () => {
     try {
@@ -71,9 +90,13 @@ export default function Dashboard() {
       const res = await fetch(`http://localhost:5000/api/registros/${id}/estado`, {
         method: 'PATCH'
       });
-      if (res.ok) cargarRegistros();
+      if (res.ok) {
+        await cargarRegistros();
+        mostrarAlerta('Estado del registro actualizado con éxito', 'info');
+      }
     } catch (err) {
       console.error(err);
+      mostrarAlerta('Error al actualizar el estado', 'error');
     }
   };
 
@@ -82,9 +105,13 @@ export default function Dashboard() {
       const res = await fetch(`http://localhost:5000/api/registros/${id}`, {
         method: 'DELETE'
       });
-      if (res.ok) cargarRegistros();
+      if (res.ok) {
+        await cargarRegistros();
+        mostrarAlerta('Registro eliminado correctamente', 'warning');
+      }
     } catch (err) {
       console.error(err);
+      mostrarAlerta('Error al eliminar el registro', 'error');
     }
   };
 
@@ -107,9 +134,11 @@ export default function Dashboard() {
           fecha: new Date().toISOString().split('T')[0],
           estado: 'Pendiente'
         });
+        mostrarAlerta('¡Carrera registrada y guardada con éxito!', 'success');
       }
     } catch (err) {
       console.error('Error al guardar el nuevo registro:', err);
+      mostrarAlerta('No se pudo conectar con el servidor', 'error');
     } finally {
       setLoadingModal(false);
     }
@@ -129,6 +158,7 @@ export default function Dashboard() {
   return (
     <Box id="admin" sx={{ py: 8, backgroundColor: '#0f0f11' }}>
       <Container maxWidth="lg">
+        {/* Encabezado y Acción */}
         <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} justifyContent="space-between" alignItems={{ xs: 'flex-start', md: 'center' }} gap={2} mb={4}>
           <Box>
             <Typography variant="h4" sx={{ color: '#fff', fontWeight: 800, fontFamily: 'monospace' }}>
@@ -399,6 +429,18 @@ export default function Dashboard() {
             </DialogActions>
           </form>
         </Dialog>
+
+        {/* Notificaciones flotantes Snackbar */}
+        <Snackbar 
+          open={snackbar.open} 
+          autoHideDuration={4000} 
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        >
+          <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%', fontWeight: 600 }}>
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
       </Container>
     </Box>
   );
