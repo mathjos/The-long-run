@@ -81,8 +81,7 @@ export default function Dashboard() {
       console.error(err);
     }
   };
-
-  const handleCrearRegistro = async (e) => {
+const handleCrearRegistro = async (e) => {
     e.preventDefault();
     setLoadingModal(true);
     try {
@@ -91,8 +90,12 @@ export default function Dashboard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(nuevoCorredor)
       });
+      
       if (res.ok) {
+        // Volvemos a pedir la lista actualizada al backend
         await cargarRegistros();
+        
+        // Cerramos el modal y reseteamos el formulario
         setOpenDialog(false);
         setNuevoCorredor({
           corredor: '',
@@ -101,6 +104,8 @@ export default function Dashboard() {
           fecha: new Date().toISOString().split('T')[0],
           estado: 'Pendiente'
         });
+      } else {
+        console.error('Error en la respuesta del servidor');
       }
     } catch (err) {
       console.error('Error al guardar el nuevo registro:', err);

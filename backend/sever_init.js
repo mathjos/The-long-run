@@ -121,3 +121,37 @@ app.post('/api/registros', (req, res) => {
     acumulado: kilometrosTotales 
   });
 });
+
+// Crear un nuevo registro desde el Dashboard Modal
+app.post('/api/registros', (req, res) => {
+  const { corredor, km, causa, fecha, estado } = req.body;
+  
+  if (!corredor || !km || !causa) {
+    return res.status(400).json({ error: 'Todos los campos son obligatorios.' });
+  }
+
+  const datos = leerDatos();
+  const kmNum = Number(km);
+
+  const nuevoRegistro = {
+    id: Date.now(),
+    corredor: String(corredor).trim(),
+    km: kmNum,
+    causa: String(causa).trim(),
+    fecha: fecha || new Date().toISOString().split('T')[0],
+    estado: estado || 'Pendiente'
+  };
+
+  datos.registros.unshift(nuevoRegistro);
+  datos.kilometrosTotales += kmNum;
+  
+  guardarDatos(datos);
+
+  // Devolvemos el registro creado y la lista completa actualizada
+  res.status(201).json({ 
+    mensaje: 'Registro guardado con éxito', 
+    registro: nuevoRegistro,
+    registros: datos.registros,
+    acumulado: datos.kilometrosTotales 
+  });
+});
