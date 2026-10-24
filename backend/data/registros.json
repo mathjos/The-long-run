@@ -1,6 +1,14 @@
 {
-  "kilometrosTotales": 177,
+  "kilometrosTotales": 178,
   "registros": [
+    {
+      "id": 1792814171646,
+      "corredor": "Atleta Registrado",
+      "km": 1,
+      "causa": "Causa Comunitaria Guayaquil",
+      "estado": "Aprobado",
+      "fecha": "2026-10-24"
+    },
     {
       "id": 1792810951426,
       "corredor": "Atleta Registrado",

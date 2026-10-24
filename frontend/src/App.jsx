@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import InitScreen from './components/InitScreen';
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
+import Navbar from './components/navbar';
+import Hero from './components/hero';
 import UserProfile from './components/UserProfile';
 import Aliados from './components/Aliados';
-import ContactForm from './components/ContactForm';
+import ContactForm from './components/contactForm';
 import Dashboard from './components/Dashboard';
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
 
@@ -38,7 +38,6 @@ export default function App() {
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       
-      {/* Pantalla de Carga Inicial Profesional */}
       {loading && <InitScreen onFinish={() => setLoading(false)} />}
 
       <div style={{ backgroundColor: '#0f0f11', minHeight: '100vh' }}>
