@@ -5,6 +5,8 @@ export default function Navbar() {
   return (
     <AppBar position="sticky" elevation={0} sx={{ backgroundColor: '#16161c', borderBottom: '1px solid #262632' }}>
       <Toolbar sx={{ justifyContent: 'space-between', px: { xs: 2, md: 4 } }}>
+        
+        {/* Logo Branding + Badge PRO */}
         <Box display="flex" alignItems="center" gap={1.5}>
           <Typography 
             variant="h6" 
@@ -27,6 +29,7 @@ export default function Navbar() {
           />
         </Box>
 
+        {/* Links de Navegación y Perfil de Usuario */}
         <Box display="flex" alignItems="center" gap={{ xs: 1, sm: 2 }}>
           <Button 
             href="#inicio" 
@@ -41,6 +44,21 @@ export default function Navbar() {
           >
             Inicio
           </Button>
+
+          <Button 
+            href="#perfil" 
+            sx={{ 
+              color: '#a0a0ab', 
+              fontWeight: 600,
+              textTransform: 'none',
+              transition: 'color 0.2s',
+              '&:hover': { color: '#fc4c02' },
+              '&:focus-visible': { outline: '2px solid #fc4c02', outlineOffset: '2px' }
+            }}
+          >
+            Perfil
+          </Button>
+
           <Button 
             href="#aliados" 
             sx={{ 
@@ -54,6 +72,7 @@ export default function Navbar() {
           >
             Aliados
           </Button>
+
           <Button 
             href="#contacto" 
             sx={{ 
@@ -67,21 +86,40 @@ export default function Navbar() {
           >
             Contacto
           </Button>
-          <Avatar 
+
+          <Button 
+            href="#admin" 
             sx={{ 
-              bgcolor: '#fc4c02', 
-              width: 36, 
-              height: 36, 
-              fontSize: 14, 
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              transition: 'transform 0.2s, box-shadow 0.2s',
-              '&:hover': { transform: 'scale(1.08)', boxShadow: '0 0 12px rgba(252, 76, 2, 0.4)' }
+              color: '#a0a0ab', 
+              fontWeight: 600,
+              textTransform: 'none',
+              transition: 'color 0.2s',
+              '&:hover': { color: '#fc4c02' },
+              '&:focus-visible': { outline: '2px solid #fc4c02', outlineOffset: '2px' }
             }}
           >
-            MC
-          </Avatar>
+            Impacto
+          </Button>
+
+          {/* Avatar con enlace directo al perfil */}
+          <Button href="#perfil" sx={{ p: 0, minWidth: 'auto', borderRadius: '50%' }}>
+            <Avatar 
+              sx={{ 
+                bgcolor: '#fc4c02', 
+                width: 36, 
+                height: 36, 
+                fontSize: 14, 
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                transition: 'transform 0.2s, box-shadow 0.2s',
+                '&:hover': { transform: 'scale(1.08)', boxShadow: '0 0 12px rgba(252, 76, 2, 0.4)' }
+              }}
+            >
+              MC
+            </Avatar>
+          </Button>
         </Box>
+
       </Toolbar>
     </AppBar>
   );
