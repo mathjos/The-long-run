@@ -1,125 +1,158 @@
-import { useState, useEffect } from 'react';
-import { Container, Typography, Box, Slider, Button, Paper, LinearProgress } from '@mui/material';
+import { useState } from 'react';
+import { Box, Container, Typography, Button, TextField, Paper, Slider } from '@mui/material';
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
-import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
+import EditIcon from '@mui/icons-material/Edit';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import CheckIcon from '@mui/icons-material/Check';
 
-export default function Hero({ onKilometrosChange }) {
-  const [kmRegistrados, setKmRegistrados] = useState(0);
-  const [meta] = useState(500);
-  const [kmInput, setKmInput] = useState(5);
-  const [cargando, setCargando] = useState(false);
+export default function Hero() {
+  const [currentKm, setCurrentKm] = useState(204);
+  const [goalKm, setGoalKm] = useState(500);
+  
+  // Estados para la edición de la meta
+  const [isEditingGoal, setIsEditingGoal] = useState(false);
+  const [tempGoal, setTempGoal] = useState(goalKm);
 
-  const obtenerKilometros = async () => {
-    try {
-      const res = await fetch('http://localhost:5000/api/kilometros');
-      const data = await res.json();
-      setKmRegistrados(data.acumulado || 0);
-    } catch (err) {
-      console.error('Error al obtener kilómetros:', err);
+  const progressPercentage = Math.min(Math.round((currentKm / goalKm) * 100), 100);
+
+  // Manejador del cambio en la barra deslizadora
+  const handleSliderChange = (event, newValue) => {
+    setCurrentKm(newValue);
+  };
+
+  // Guardar nueva meta
+  const handleSaveGoal = () => {
+    const num = Number(tempGoal);
+    if (num > 0) {
+      setGoalKm(num);
+      setIsEditingGoal(false);
     }
   };
 
-  useEffect(() => {
-    obtenerKilometros();
-  }, []);
-
-  const handleSumarKilometros = async () => {
-    if (kmInput <= 0) return;
-    setCargando(true);
-    try {
-      const res = await fetch('http://localhost:5000/api/kilometros', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ km: Number(kmInput) })
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setKmRegistrados(data.acumulado);
-        if (onKilometrosChange) onKilometrosChange(); // Notifica al Dashboard o componentes padres
-      }
-    } catch (err) {
-      console.error('Error al registrar kilómetros:', err);
-    } finally {
-      setCargando(false);
-    }
+  // Reiniciar contador a 0
+  const handleResetKm = () => {
+    setCurrentKm(0);
   };
-
-  const porcentaje = Math.min(Math.round((kmRegistrados / meta) * 100), 100);
 
   return (
-    <Box sx={{ pt: 12, pb: 8, backgroundColor: '#0f0f11', color: '#fff' }}>
+    <Box sx={{ py: 6, backgroundColor: '#0f0f11', textAlign: 'center', color: '#fff' }}>
       <Container maxWidth="md">
-        <Box textAlign="center" mb={6}>
-          <Typography variant="h2" sx={{ fontWeight: 900, fontFamily: 'monospace', letterSpacing: -1, mb: 2 }}>
-            CADA KILÓMETRO <Box component="span" sx={{ color: '#fc4c02' }}>CUENTA</Box>
-          </Typography>
-          <Typography variant="h6" sx={{ color: '#a0a0ab', maxWidth: 600, mx: 'auto' }}>
-            Únete a la maratón con propósito social en Guayaquil. Convierte tu esfuerzo físico en donaciones reales.
-          </Typography>
-        </Box>
+        <Typography variant="body1" sx={{ color: '#a0a0ab', mb: 3, fontWeight: 500 }}>
+          Convierte tu esfuerzo físico en donaciones reales.
+        </Typography>
 
-        {/* Métrica Global */}
-        <Paper elevation={0} sx={{ p: 4, backgroundColor: '#16161c', border: '1px solid #262632', borderRadius: 4, mb: 4 }}>
-          <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-            <Box display="flex" alignItems="center" gap={1}>
-              <DirectionsRunIcon sx={{ color: '#fc4c02' }} />
-              <Typography variant="h6" sx={{ fontWeight: 700 }}>META COMUNITARIA</Typography>
-            </Box>
-            <Typography variant="h5" sx={{ fontWeight: 800, color: '#fc4c02' }}>
-              {kmRegistrados} / {meta} KM
+        {/* Tarjeta de Meta Comunitaria */}
+        <Paper 
+          elevation={0} 
+          sx={{ 
+            p: 4, 
+            backgroundColor: '#16161c', 
+            border: '1px solid #262632', 
+            borderRadius: 4,
+            position: 'relative',
+            overflow: 'hidden',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.4)'
+          }}
+        >
+          <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
+            <DirectionsRunIcon sx={{ color: '#fc4c02', fontSize: 40 }} />
+          </Box>
+
+          <Typography variant="subtitle2" sx={{ color: '#a0a0ab', letterSpacing: 2, fontWeight: 700, mb: 1 }}>
+            META COMUNITARIA
+          </Typography>
+
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2, mb: 2, flexWrap: 'wrap' }}>
+            <Typography variant="h4" sx={{ color: '#fc4c02', fontWeight: 900, fontFamily: 'monospace' }}>
+              {currentKm} / {goalKm} KM
             </Typography>
           </Box>
 
-          <LinearProgress 
-            variant="determinate" 
-            value={porcentaje} 
-            sx={{ 
-              height: 12, 
-              borderRadius: 6, 
-              backgroundColor: '#262632',
-              '& .MuiLinearProgress-bar': { backgroundColor: '#fc4c02' }
-            }} 
-          />
-          <Typography variant="caption" sx={{ color: '#71717a', mt: 1, display: 'block', textAlign: 'right' }}>
-            {porcentaje}% de la meta alcanzada
-          </Typography>
-        </Paper>
-
-        {/* Controles de Registro de KM */}
-        <Paper elevation={0} sx={{ p: 4, backgroundColor: '#16161c', border: '1px solid #262632', borderRadius: 4 }}>
-          <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-            <LocalFireDepartmentIcon sx={{ color: '#fc4c02' }} /> REGISTRA TU ENTRENAMIENTO
-          </Typography>
-
-          <Box sx={{ px: 2, mb: 3 }}>
+          {/* Barra Deslizadora Interactiva para Modificar los KM directamente */}
+          <Box sx={{ px: 2, my: 2 }}>
             <Slider
-              value={kmInput}
-              min={1}
-              max={42}
-              valueLabelDisplay="auto"
-              onChange={(e, val) => setKmInput(val)}
+              value={currentKm}
+              min={0}
+              max={goalKm}
+              onChange={handleSliderChange}
+              aria-label="Kilómetros recorridos"
               sx={{
                 color: '#fc4c02',
-                '& .MuiSlider-thumb': { backgroundColor: '#fff' },
-                '& .MuiSlider-track': { backgroundColor: '#fc4c02' },
-                '& .MuiSlider-rail': { backgroundColor: '#262632' }
+                height: 10,
+                '& .MuiSlider-track': {
+                  border: 'none',
+                  backgroundColor: '#fc4c02',
+                },
+                '& .MuiSlider-rail': {
+                  backgroundColor: '#262632',
+                  opacity: 1,
+                },
+                '& .MuiSlider-thumb': {
+                  height: 22,
+                  width: 22,
+                  backgroundColor: '#fff',
+                  border: '3px solid #fc4c02',
+                  '&:focus, &:hover, &.Mui-active, &.Mui-focusVisible': {
+                    boxShadow: '0 0 0 8px rgba(252, 76, 2, 0.2)',
+                  },
+                },
               }}
             />
           </Box>
 
-          <Box display="flex" justifyContent="space-between" alignItems="center">
-            <Typography variant="h6" sx={{ fontWeight: 700 }}>
-              Distancia a sumar: <Box component="span" sx={{ color: '#fc4c02' }}>{kmInput} KM</Box>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2, mt: 1 }}>
+            <Typography variant="caption" sx={{ color: '#71717a', fontWeight: 600 }}>
+              {progressPercentage}% de la meta alcanzada
             </Typography>
 
-            <Button
-              variant="contained"
-              onClick={handleSumarKilometros}
-              disabled={cargando}
-              sx={{ backgroundColor: '#fc4c02', '&:hover': { backgroundColor: '#d93d00' }, fontWeight: 700, px: 4, textTransform: 'none' }}
-            >
-              {cargando ? 'Guardando...' : 'Sumar Kilómetros'}
-            </Button>
+            {/* Panel de Controles: Cambiar Meta y Reiniciar */}
+            <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center', flexWrap: 'wrap' }}>
+              
+              {/* Botón para Cambiar la Meta */}
+              {isEditingGoal ? (
+                <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                  <TextField 
+                    size="small"
+                    type="number"
+                    value={tempGoal}
+                    onChange={(e) => setTempGoal(e.target.value)}
+                    sx={{ 
+                      width: 90,
+                      '& .MuiOutlinedInput-root': { color: '#fff', backgroundColor: '#1f1f28', '& fieldset': { borderColor: '#fc4c02' } } 
+                    }}
+                  />
+                  <Button variant="contained" size="small" onClick={handleSaveGoal} sx={{ backgroundColor: '#fc4c02', minWidth: 'auto', p: 1 }}>
+                    <CheckIcon />
+                  </Button>
+                </Box>
+              ) : (
+                <Button 
+                  variant="outlined" 
+                  size="small" 
+                  startIcon={<EditIcon />}
+                  onClick={() => { setTempGoal(goalKm); setIsEditingGoal(true); }}
+                  sx={{ borderColor: '#262632', color: '#a0a0ab', textTransform: 'none', '&:hover': { borderColor: '#fc4c02', color: '#fc4c02' } }}
+                >
+                  Cambiar Meta
+                </Button>
+              )}
+
+              {/* Botón para Reiniciar a 0 */}
+              <Button 
+                variant="outlined" 
+                size="small" 
+                startIcon={<RefreshIcon />}
+                onClick={handleResetKm}
+                sx={{ 
+                  borderColor: '#3a2522', 
+                  color: '#ff6b6b', 
+                  textTransform: 'none', 
+                  '&:hover': { borderColor: '#ff6b6b', backgroundColor: 'rgba(255,107,107,0.08)' } 
+                }}
+              >
+                Reiniciar a 0 km
+              </Button>
+            </Box>
           </Box>
         </Paper>
       </Container>
