@@ -1,13 +1,29 @@
 {
-  "kilometrosTotales": 124,
+  "kilometrosTotales": 177,
   "registros": [
     {
-      "id": 1,
-      "corredor": "Carlos Mendoza",
-      "km": 12,
-      "causa": "Agua Potable Mapasingue",
+      "id": 1792810951426,
+      "corredor": "Atleta Registrado",
+      "km": 23,
+      "causa": "Causa Comunitaria Guayaquil",
       "estado": "Aprobado",
-      "fecha": "2026-10-20"
+      "fecha": "2026-10-24"
+    },
+    {
+      "id": 1792806241106,
+      "corredor": "Atleta Registrado",
+      "km": 19,
+      "causa": "Causa Comunitaria Guayaquil",
+      "estado": "Aprobado",
+      "fecha": "2026-10-24"
+    },
+    {
+      "id": 1792806236496,
+      "corredor": "Atleta Registrado",
+      "km": 11,
+      "causa": "Causa Comunitaria Guayaquil",
+      "estado": "Aprobado",
+      "fecha": "2026-10-24"
     },
     {
       "id": 2,

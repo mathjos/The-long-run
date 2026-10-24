@@ -1,8 +1,10 @@
-import navbar from './components/navbar';
-import hero from './components/heroero';
+import { useState } from 'react';
+import InitScreen from './components/InitScreen';
+import Navbar from './components/Navbar';
+import Hero from './components/Hero';
 import UserProfile from './components/UserProfile';
 import Aliados from './components/Aliados';
-import contactForm from './components/contactForm';
+import ContactForm from './components/ContactForm';
 import Dashboard from './components/Dashboard';
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
 
@@ -23,19 +25,22 @@ const darkTheme = createTheme({
   },
   typography: {
     fontFamily: '"Plus Jakarta Sans", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-    h1: { fontWeight: 800, letterSpacing: '-0.02em' },
-    h2: { fontWeight: 700, letterSpacing: '-0.01em' },
-    h3: { fontWeight: 700 },
   },
   shape: {
     borderRadius: 12,
   },
 });
 
-function App() {
+export default function App() {
+  const [loading, setLoading] = useState(true);
+
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
+      
+      {/* Pantalla de Carga Inicial Profesional */}
+      {loading && <InitScreen onFinish={() => setLoading(false)} />}
+
       <div style={{ backgroundColor: '#0f0f11', minHeight: '100vh' }}>
         <Navbar />
         <Hero />
@@ -47,5 +52,3 @@ function App() {
     </ThemeProvider>
   );
 }
-
-export default App;
