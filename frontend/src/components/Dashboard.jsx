@@ -23,19 +23,25 @@ import {
   DialogContent,
   DialogActions,
   TextField,
-  CircularProgress
+  CircularProgress,
+  Grid,
+  Card,
+  CardContent,
+  Avatar
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PendingIcon from '@mui/icons-material/Pending';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
+import QueryStatsIcon from '@mui/icons-material/QueryStats';
+import HourglassTopIcon from '@mui/icons-material/HourglassTop';
 
 export default function Dashboard() {
   const [registros, setRegistros] = useState([]);
   const [filtro, setFiltro] = useState('Todos');
 
-  // Estados para el Modal de Nuevo Registro
   const [openDialog, setOpenDialog] = useState(false);
   const [loadingModal, setLoadingModal] = useState(false);
   const [nuevoCorredor, setNuevoCorredor] = useState({
@@ -81,7 +87,8 @@ export default function Dashboard() {
       console.error(err);
     }
   };
-const handleCrearRegistro = async (e) => {
+
+  const handleCrearRegistro = async (e) => {
     e.preventDefault();
     setLoadingModal(true);
     try {
@@ -90,12 +97,8 @@ const handleCrearRegistro = async (e) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(nuevoCorredor)
       });
-      
       if (res.ok) {
-        // Volvemos a pedir la lista actualizada al backend
         await cargarRegistros();
-        
-        // Cerramos el modal y reseteamos el formulario
         setOpenDialog(false);
         setNuevoCorredor({
           corredor: '',
@@ -104,8 +107,6 @@ const handleCrearRegistro = async (e) => {
           fecha: new Date().toISOString().split('T')[0],
           estado: 'Pendiente'
         });
-      } else {
-        console.error('Error en la respuesta del servidor');
       }
     } catch (err) {
       console.error('Error al guardar el nuevo registro:', err);
@@ -113,6 +114,12 @@ const handleCrearRegistro = async (e) => {
       setLoadingModal(false);
     }
   };
+
+  const totalKmAprobados = registros
+    .filter(r => r.estado === 'Aprobado')
+    .reduce((acc, r) => acc + Number(r.km), 0);
+
+  const totalPendientes = registros.filter(r => r.estado === 'Pendiente').length;
 
   const registrosFiltrados = registros.filter(r => {
     if (filtro === 'Todos') return true;
@@ -162,6 +169,63 @@ const handleCrearRegistro = async (e) => {
             </Button>
           </Box>
         </Box>
+
+        {/* Tarjetas de Resumen KPI */}
+        <Grid container spacing={3} mb={4}>
+          <Grid item xs={12} sm={4}>
+            <Card elevation={0} sx={{ backgroundColor: '#16161c', border: '1px solid #262632', borderRadius: 3 }}>
+              <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Avatar sx={{ bgcolor: 'rgba(252, 76, 2, 0.1)', color: '#fc4c02', width: 48, height: 48 }}>
+                  <DirectionsRunIcon />
+                </Avatar>
+                <Box>
+                  <Typography variant="caption" sx={{ color: '#71717a', fontWeight: 700 }}>
+                    REGISTROS TOTALES
+                  </Typography>
+                  <Typography variant="h5" sx={{ color: '#ffffff', fontWeight: 800 }}>
+                    {registros.length}
+                  </Typography>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} sm={4}>
+            <Card elevation={0} sx={{ backgroundColor: '#16161c', border: '1px solid #262632', borderRadius: 3 }}>
+              <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Avatar sx={{ bgcolor: 'rgba(34, 197, 94, 0.1)', color: '#22c55e', width: 48, height: 48 }}>
+                  <QueryStatsIcon />
+                </Avatar>
+                <Box>
+                  <Typography variant="caption" sx={{ color: '#71717a', fontWeight: 700 }}>
+                    KM VALIDADOS
+                  </Typography>
+                  <Typography variant="h5" sx={{ color: '#22c55e', fontWeight: 800 }}>
+                    {totalKmAprobados} KM
+                  </Typography>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} sm={4}>
+            <Card elevation={0} sx={{ backgroundColor: '#16161c', border: '1px solid #262632', borderRadius: 3 }}>
+              <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Avatar sx={{ bgcolor: 'rgba(234, 179, 8, 0.1)', color: '#eab308', width: 48, height: 48 }}>
+                  <HourglassTopIcon />
+                </Avatar>
+                <Box>
+                  <Typography variant="caption" sx={{ color: '#71717a', fontWeight: 700 }}>
+                    POR REVISAR
+                  </Typography>
+                  <Typography variant="h5" sx={{ color: '#eab308', fontWeight: 800 }}>
+                    {totalPendientes}
+                  </Typography>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
 
         {/* Tabla de Registros */}
         <TableContainer component={Paper} elevation={0} sx={{ backgroundColor: '#16161c', border: '1px solid #262632', borderRadius: 3 }}>
@@ -222,8 +286,10 @@ const handleCrearRegistro = async (e) => {
         <Dialog 
           open={openDialog} 
           onClose={() => setOpenDialog(false)}
-          PaperProps={{
-            sx: { backgroundColor: '#16161c', color: '#fff', borderRadius: 3, border: '1px solid #262632', width: '100%', maxWidth: 500 }
+          slotProps={{
+            paper: {
+              sx: { backgroundColor: '#16161c', color: '#fff', borderRadius: 3, border: '1px solid #262632', width: '100%', maxWidth: 500 }
+            }
           }}
         >
           <form onSubmit={handleCrearRegistro}>
@@ -239,7 +305,9 @@ const handleCrearRegistro = async (e) => {
                 required
                 value={nuevoCorredor.corredor}
                 onChange={(e) => setNuevoCorredor({ ...nuevoCorredor, corredor: e.target.value })}
-                InputLabelProps={{ style: { color: '#71717a' } }}
+                slotProps={{
+                  inputLabel: { style: { color: '#71717a' } }
+                }}
                 sx={{
                   '& .MuiOutlinedInput-root': {
                     color: '#fff',
@@ -257,10 +325,12 @@ const handleCrearRegistro = async (e) => {
                 variant="outlined"
                 fullWidth
                 required
-                inputProps={{ min: 1 }}
+                slotProps={{
+                  htmlInput: { min: 1 },
+                  inputLabel: { style: { color: '#71717a' } }
+                }}
                 value={nuevoCorredor.km}
                 onChange={(e) => setNuevoCorredor({ ...nuevoCorredor, km: e.target.value })}
-                InputLabelProps={{ style: { color: '#71717a' } }}
                 sx={{
                   '& .MuiOutlinedInput-root': {
                     color: '#fff',
@@ -279,7 +349,9 @@ const handleCrearRegistro = async (e) => {
                 required
                 value={nuevoCorredor.causa}
                 onChange={(e) => setNuevoCorredor({ ...nuevoCorredor, causa: e.target.value })}
-                InputLabelProps={{ style: { color: '#71717a' } }}
+                slotProps={{
+                  inputLabel: { style: { color: '#71717a' } }
+                }}
                 sx={{
                   '& .MuiOutlinedInput-root': {
                     color: '#fff',
