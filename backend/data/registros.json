@@ -1,0 +1,29 @@
+{
+  "kilometrosTotales": 124,
+  "registros": [
+    {
+      "id": 1,
+      "corredor": "Carlos Mendoza",
+      "km": 12,
+      "causa": "Agua Potable Mapasingue",
+      "estado": "Aprobado",
+      "fecha": "2026-10-20"
+    },
+    {
+      "id": 2,
+      "corredor": "María Fernanda Gómez",
+      "km": 8,
+      "causa": "Salud Comunitaria",
+      "estado": "Pendiente",
+      "fecha": "2026-10-22"
+    },
+    {
+      "id": 3,
+      "corredor": "Andrea Silva",
+      "km": 15,
+      "causa": "Innovación ESPOL",
+      "estado": "Aprobado",
+      "fecha": "2026-10-23"
+    }
+  ]
+}
